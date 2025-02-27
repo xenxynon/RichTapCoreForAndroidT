@@ -4,17 +4,15 @@ Common_CFlags += ["-Werror"]
 cc_library_shared {
     name: "vendor.qti.hardware.vibrator.impl",
     vendor: true,
+    cflags: Common_CFlags,
     srcs: [
         "Vibrator.cpp",
-        "VibratorOffload.cpp",
     ],
     shared_libs: [
         "libcutils",
         "libutils",
         "liblog",
         "libqtivibratoreffect",
-        "libqtivibratoreffectoffload",
-        "libsoc_helper",
         "libbinder_ndk",
         "android.hardware.vibrator-V2-ndk",
     ],
@@ -29,8 +27,10 @@ cc_binary {
     vintf_fragments: [
         "vendor.qti.hardware.vibrator.service.xml",
     ],
+    cflags: Common_CFlags,
     srcs: [
         "service.cpp",
+        "richtap/*.cpp",
     ],
     shared_libs: [
         "libcutils",
@@ -38,6 +38,26 @@ cc_binary {
         "libbase",
         "libbinder_ndk",
         "android.hardware.vibrator-V2-ndk",
+        "vendor.aac.hardware.richtap.vibrator-V2-ndk",
         "vendor.qti.hardware.vibrator.impl",
+        "libaacvibrator",
+        "liblog",
     ],
+}
+
+cc_prebuilt_library_shared {
+    name: "libaacvibrator",
+    arch: {
+        arm: {
+            srcs: ["richtap/libs/lib/libaacvibrator.so"],
+        },
+        arm64: {
+            srcs: ["richtap/libs/lib64/libaacvibrator.so"],
+        }
+    },
+    shared_libs: ["libc++", "libc", "libcutils", "libdl", "liblog", "libm", "libutils"],
+    strip: {
+        none:true,
+    },
+    vendor: true,
 }
